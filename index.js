@@ -6,6 +6,7 @@ import { createServer } from "http";
 import { Server } from "socket.io";
 import connectToDB from "./database/config.js";
 import authRoutes from "./routes/user.routes.js";
+import chatRoomRoutes from "./routes/chatroom.routes.js";
 
 dotenv.config();
 connectToDB();
@@ -39,6 +40,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 app.use("/api/auth", authRoutes);
+app.use("/api/chatroom", chatRoomRoutes);
 
 const PORT = process.env.PORT || 5000;
 httpServer.listen(PORT, () => {
