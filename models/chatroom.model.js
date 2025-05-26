@@ -3,7 +3,10 @@ import mongoose from "mongoose";
 const chatRoomSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
-    description: { type: String },
+    description: {
+      type: String,
+      maxlength: [200, "Description must not exceed 200 characters"]
+    },
     avatar: { type: String },
     members: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     admins: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
