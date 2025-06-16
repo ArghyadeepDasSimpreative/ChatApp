@@ -5,10 +5,11 @@ import path from "path";
 import { createServer } from "http";
 import { Server } from "socket.io";
 import connectToDB from "./database/config.js";
-import authRoutes from "./routes/user.routes.js";
+import authRoutes from "./routes/auth.routes.js";
 import chatRoomRoutes from "./routes/chatroom.routes.js";
 import { handleSendMessage } from "./socket/message.js";
 import friendShipRoutes from "./routes/friendship.routes.js";
+import userRoutes from "./routes/user.routes.js";
 
 dotenv.config();
 connectToDB();
@@ -47,6 +48,7 @@ app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 app.use("/api/auth", authRoutes);
 app.use("/api/chatroom", chatRoomRoutes);
 app.use("/api/friendship", friendShipRoutes);
+app.use("/api/users", userRoutes);
 
 const PORT = process.env.PORT || 5000;
 httpServer.listen(PORT, () => {

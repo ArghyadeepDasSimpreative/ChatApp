@@ -89,3 +89,38 @@ export const loginUser = async (req, res) => {
     errorHandler(err, req, res);
   }
 };
+
+export const updateProfile = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { firstName, lastName, description } = req.body;
+
+    const user = await User.findByIdAndUpdate(
+      userId,
+      {
+        ...(firstName && { firstName }),
+        ...(lastName && { lastName }),
+        ...(description && { description }),
+      },
+      { new: true, runValidators: true }
+    ).select('-password'); // Exclude password from the response
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.status(200).json({ message: 'Profile updated successfully', user });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+export const getUsersList = async (req, res) => {
+  try {
+    const users = await User.find({}, "fullName description email profileImage");
+
+    res.status(200).json({ users });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch users", error: error.message });
+  }
+};

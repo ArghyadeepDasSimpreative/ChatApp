@@ -1,9 +1,10 @@
 import express from "express";
-import { loginUser, registerUser } from "../controllers/user.controllers.js";
+import { authorizeRole } from "../middlewares/authorize.js";
+import { getUsersList, updateProfile } from "../controllers/user.controllers.js";
 
-const authRoutes = express.Router();
+const userRoutes = express.Router();
 
-authRoutes.post("/register", registerUser);
-authRoutes.post("/login", loginUser);
+userRoutes.put("/", authorizeRole(["user"]), updateProfile);
+userRoutes.get("/", authorizeRole(["user"]), getUsersList);
 
-export default authRoutes;
+export default userRoutes;
