@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import User from '../models/user.model.js';
+import Friendship from '../models/friendship.model.js';
 import { errorHandler } from '../lib/error.js';
 
 const JWT_SECRET = process.env.JWT_SECRET
@@ -117,10 +118,38 @@ export const updateProfile = async (req, res) => {
 
 export const getUsersList = async (req, res) => {
   try {
-    const users = await User.find({}, "fullName description email profileImage");
+    const users = await User.find(
+      { _id: { $ne: req.user.id } },
+      "fullName description email profileImageURL"
+    );
 
-    res.status(200).json({ users });
+    const userIds = users.map(u => u._id);
+
+    const friendships = await Friendship.find({
+      $or: [
+        { requester: req.user.id, recipient: { $in: userIds } },
+        { recipient: req.user.id, requester: { $in: userIds } }
+      ]
+    });
+
+    const result = users.map(user => {
+      const friendship = friendships.find(f =>
+        (f.requester.toString() === req.user.id && f.recipient.toString() === user._id.toString()) ||
+        (f.recipient.toString() === req.user.id && f.requester.toString() === user._id.toString())
+      );
+
+      return {
+        ...user.toObject(),
+        friendship_status: friendship?.status === 'pending' ? 1 :
+          friendship?.status === 'accepted' ? 2 :
+          friendship?.status === 'rejected' ? 3 :
+          friendship?.status === 'blocked' ? 3 : 0
+      };
+    });
+    return res.status(200).json({ success: true, users: result });
+
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: "Failed to fetch users", error: error.message });
   }
 };

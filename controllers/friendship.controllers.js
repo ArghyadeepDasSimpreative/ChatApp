@@ -1,6 +1,7 @@
 import { errorHandler } from "../lib/error.js";
 import Friendship from "../models/friendship.model.js";
 import User from "../models/user.model.js";
+import mongoose from "mongoose";
 
 export const sendFriendRequest = async (req, res) => {
   const requesterId = req.user.id;
@@ -77,9 +78,12 @@ export const getPendingFriendRequests = async (req, res) => {
 export const acceptFriendRequest = async (req, res) => {
   try {
     const currentUserId = req.user.id;
-    const requestId = req.params.id;
+    const requester = req.params.id;
 
-    const request = await Friendship.findById(requestId);
+    const request = await Friendship.findOne({
+      requester: new mongoose.Types.ObjectId(requester),
+      recipient: new mongoose.Types.ObjectId(currentUserId)
+    });
 
     if (!request) {
       return res.status(404).json({ success: false, message: 'Friend request not found.' });
@@ -166,4 +170,37 @@ export const cancelFriendRequest = async (req, res) => {
   }
 };
 
+export const blockFriend = async (req, res) => {
+   try {
+    const currentUserId = req.user.id;
+    const requester = req.params.id;
+    console.log("currentUserId",currentUserId);
+    console.log("requester",requester);
 
+    const request = await Friendship.findOne({
+      requester: new mongoose.Types.ObjectId(requester),
+      recipient: new mongoose.Types.ObjectId(currentUserId)
+    });
+    console.log("request",request);
+
+    if (!request) {
+      return res.status(404).json({ success: false, message: 'Friend request not found.' });
+    }
+
+    // if (request.requester.toString() !== currentUserId) {
+    //   return res.status(403).json({ success: false, message: 'Not authorized to block this request.' });
+    // }
+
+    if (request.status !== 'pending' && request.status !== 'accepted') {
+      return res.status(400).json({ success: false, message: 'Only pending requests and accepted friends can be blocked.' });
+    }
+
+    request.status = 'blocked';
+    await request.save();
+
+    res.status(200).json({ success: true, message: 'Friend request blocked.' });
+  } catch (error) {
+    console.error('Error blocking the friend:', error);
+    res.status(500).json({ success: false, message: 'Failed to block the friend.' });
+  } 
+}
