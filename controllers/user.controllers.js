@@ -143,7 +143,7 @@ export const getUsersList = async (req, res) => {
         friendship_status: friendship?.status === 'pending' ? 1 :
           friendship?.status === 'accepted' ? 2 :
           friendship?.status === 'rejected' ? 3 :
-          friendship?.status === 'blocked' ? 3 : 0
+          friendship?.status === 'blocked' ? 4 : 0
       };
     });
     return res.status(200).json({ success: true, users: result });
