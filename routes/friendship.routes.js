@@ -6,8 +6,8 @@ const friendShipRoutes = express.Router();
 
 friendShipRoutes.post("/", authorizeRole("user"), sendFriendRequest);
 friendShipRoutes.get("/pending", authorizeRole("user"), getPendingFriendRequests);
-friendShipRoutes.put("/:id", authorizeRole("user"), acceptFriendRequest);
-friendShipRoutes.put("/block/:id", authorizeRole("user"), blockFriend);
+friendShipRoutes.post("/:id", authorizeRole("user"), acceptFriendRequest);
+friendShipRoutes.post("/block/:id", authorizeRole("user"), blockFriend);
 friendShipRoutes.get("/", authorizeRole("user"), getFriendsList);
 friendShipRoutes.delete("/:id/cancel", authorizeRole("user"), cancelFriendRequest);
 
