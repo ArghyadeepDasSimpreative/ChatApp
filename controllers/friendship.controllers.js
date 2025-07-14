@@ -127,7 +127,9 @@ export const getFriendsList = async (req, res) => {
 
     // Get user details
     const friends = await User.find({ _id: { $in: friendIds } })
-      .select('name email profileImage');
+      .select('fullName email profileImage');
+      console.log("friends",friends);
+      
 
     res.status(200).json({
       success: true,

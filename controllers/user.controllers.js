@@ -95,6 +95,7 @@ export const updateProfile = async (req, res) => {
   try {
     const userId = req.user.id;
     const { firstName, lastName, description } = req.body;
+    const profileImageURL = req.file.path;
 
     const user = await User.findByIdAndUpdate(
       userId,
@@ -102,17 +103,18 @@ export const updateProfile = async (req, res) => {
         ...(firstName && { firstName }),
         ...(lastName && { lastName }),
         ...(description && { description }),
+        ...(profileImageURL && { profileImageURL })
       },
       { new: true, runValidators: true }
-    ).select('-password'); // Exclude password from the response
+    ).select('-password'); 
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    res.status(200).json({ message: 'Profile updated successfully', user });
+    return res.status(200).json({ message: 'Profile updated successfully', user });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    return res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
 
@@ -153,3 +155,16 @@ export const getUsersList = async (req, res) => {
     res.status(500).json({ message: "Failed to fetch users", error: error.message });
   }
 };
+
+// export const editProfile = async (req, res) =>{
+//   try{
+
+
+//   } catch(error){
+//     console.log("error when try to update the profile.");
+//     return res.status(500).json({
+//       message: "Failed to update the profile",
+//       error: error.message
+//     })
+//   }
+// }
