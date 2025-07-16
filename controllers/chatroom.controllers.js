@@ -1,5 +1,6 @@
 import ChatRoom from "../models/chatroom.model.js";
 import { errorHandler } from "../lib/error.js";
+import { findOrCreatePrivateRoom, createGroupChat } from "../common.js";
 
 export const createChatRoom = async (req, res) => {
   try {
@@ -201,4 +202,23 @@ export const changePrivacyStatus = async (req, res) => {
   }
 };
 
+export const handlePrivateChat = async (req, res) => {
+  const { user1, user2 } = req.body;
+
+  try {
+    const room = await findOrCreatePrivateRoom(user1, user2);
+    return res.json({ success: true, room });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Error creating private chat', error: err.message });
+  }
+};
+
+export const handleGroupChat = async (req, res) => {
+  try {
+    const room = await createGroupChat(req.body);
+    return res.json({ success: true, room });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Error creating group chat', error: err.message });
+  }
+};
 

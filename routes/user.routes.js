@@ -5,7 +5,7 @@ import {upload} from "../upload.js"
 
 const userRoutes = express.Router();
 
-userRoutes.put("/",upload.single('file'), authorizeRole(["user"]), updateProfile);
+userRoutes.post("/",upload.single('file'), authorizeRole(["user"]), updateProfile);
 userRoutes.get("/", authorizeRole(["user"]), getUsersList);
 
 export default userRoutes;
