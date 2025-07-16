@@ -166,7 +166,7 @@ export const getUsers = async (req, res) => {
     }
     const users = await User.find(
       { _id:  req.user.id },
-      "fullName description email profileImageURL"
+      "fullName description email profileImageURL phoneNumber"
     );
     if(users.length>0){
       return res.status(200).json({
