@@ -1,4 +1,5 @@
 import ChatRoom from "../models/chatroom.model.js";
+import Message from "../models/message.model.js"
 import { errorHandler } from "../lib/error.js";
 import { findOrCreatePrivateRoom, createGroupChat } from "../common.js";
 
@@ -222,3 +223,30 @@ export const handleGroupChat = async (req, res) => {
   }
 };
 
+export const sendMessage = async (req, res) => {
+  const { chatRoom, sender, content, messageType, fileUrl } = req.body;
+
+  try {
+    const message = await Message.create({
+      chatRoom,
+      sender,
+      content,
+      messageType,
+      fileUrl,
+    });
+
+    await ChatRoom.findByIdAndUpdate(chatRoom, {
+      lastMessage: {
+        text: content || messageType,
+        sender,
+        createdAt: new Date(),
+      },
+      lastActiveAt: new Date(),
+      $inc: { messagesCount: 1 }
+    });
+
+    return res.status(201).json({ success: true, message });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: "Message not sent", error: err.message });
+  }
+};

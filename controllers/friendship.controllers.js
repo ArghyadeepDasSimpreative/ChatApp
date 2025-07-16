@@ -55,7 +55,7 @@ export const getPendingFriendRequests = async (req, res) => {
     const requests = await Friendship.find({
       recipient: currentUserId,
       status: 'pending',
-    }).populate('requester', 'fullName email profileImage ');
+    }).populate('requester', 'fullName email profileImageURL ');
 
     const formatted = requests.map(r => ({
       _id: r._id,
@@ -63,7 +63,7 @@ export const getPendingFriendRequests = async (req, res) => {
         _id: r.requester._id,
         name: r.requester.fullName,
         email: r.requester.email,
-        profileImage: r.requester.profileImage || null,
+        profileImageURL: r.requester.profileImageURL || null,
       },
       requestedAt: r.createdAt,
     }));
@@ -127,7 +127,7 @@ export const getFriendsList = async (req, res) => {
 
     // Get user details
     const friends = await User.find({ _id: { $in: friendIds } })
-      .select('fullName email profileImage');
+      .select('fullName email profileImageURL');
       console.log("friends",friends);
       
 
