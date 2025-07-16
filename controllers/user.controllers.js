@@ -94,7 +94,7 @@ export const loginUser = async (req, res) => {
 export const updateProfile = async (req, res) => {
   try {
     const userId = req.user.id;
-    const { fullName, description } = req.body;
+    const { fullName, description, phoneNumber } = req.body;
     const profileImageURL = req.file.path;
 
     const user = await User.findByIdAndUpdate(
@@ -155,15 +155,30 @@ export const getUsersList = async (req, res) => {
   }
 };
 
-// export const editProfile = async (req, res) =>{
-//   try{
-
-
-//   } catch(error){
-//     console.log("error when try to update the profile.");
-//     return res.status(500).json({
-//       message: "Failed to update the profile",
-//       error: error.message
-//     })
-//   }
-// }
+export const getUsers = async (req, res) => {
+  try{
+    const authenticated_user_id = req.user.id;
+    const user_id = req.params.id;
+    if(parseInt(authenticated_user_id) != parseInt(user_id)){
+      return res.status(400).json({
+        message: 'The user is not authorized to fetch the profile.'
+      })
+    }
+    const users = await User.find(
+      { _id:  req.user.id },
+      "fullName description email profileImageURL"
+    );
+    if(users.length>0){
+      return res.status(200).json({
+        message: "User fetched successfully.",
+        data: users
+      })
+    }else{
+      return res.status(404).json({
+        message: "User is not found.",
+      })
+    }
+  } catch(error){
+    return res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+}
