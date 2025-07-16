@@ -94,14 +94,13 @@ export const loginUser = async (req, res) => {
 export const updateProfile = async (req, res) => {
   try {
     const userId = req.user.id;
-    const { firstName, lastName, description } = req.body;
+    const { fullName, description } = req.body;
     const profileImageURL = req.file.path;
 
     const user = await User.findByIdAndUpdate(
       userId,
       {
-        ...(firstName && { firstName }),
-        ...(lastName && { lastName }),
+        ...(fullName && { fullName }),
         ...(description && { description }),
         ...(profileImageURL && { profileImageURL })
       },
