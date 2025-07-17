@@ -6,13 +6,27 @@ import { findOrCreatePrivateRoom, createGroupChat } from "../common.js";
 export const createChatRoom = async (req, res) => {
   try {
     const { name, description, members = [], type = "private", tags = [] } = req.body;
-    console.log(req.user)
     if (!name) return res.status(400).json({ message: "Room name is required" });
 
     const userId = req.user.id;
-
+    if (typeof members === "string") {
+      try {
+        members = JSON.parse(members);
+      } catch (err) {
+        return res.status(400).json({ message: "Invalid members array format" });
+      }
+    }
+    if (!Array.isArray(members)) {
+      return res.status(400).json({ message: "Members must be an array" });
+    }
     const uniqueMembers = [...new Set([...members, userId])];
+    const roomExistence = await ChatRoom.findOne({
+      members:{ $all: uniqueMembers, $size:uniqueMembers.length }
+    })
 
+    if(roomExistence!=null){
+      return res.status(409).json({message: "Room already exist for the users."})
+    }
     const newRoom = new ChatRoom({
       name,
       description,
