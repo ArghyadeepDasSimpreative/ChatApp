@@ -23,9 +23,10 @@ export const createChatRoom = async (req, res) => {
     const roomExistence = await ChatRoom.findOne({
       members:{ $all: uniqueMembers, $size:uniqueMembers.length }
     })
-
+    console.log("roomExistence",roomExistence);
+    
     if(roomExistence!=null){
-      return res.status(409).json({message: "Room already exist for the users."})
+      return res.status(409).json({message: "Room already exist for the users.",room: roomExistence})
     }
     const newRoom = new ChatRoom({
       name,
