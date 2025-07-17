@@ -5,7 +5,7 @@ import { findOrCreatePrivateRoom, createGroupChat } from "../common.js";
 
 export const createChatRoom = async (req, res) => {
   try {
-    const { name, description, members = [], type = "private", tags = [] } = req.body;
+    const { name, description, members = [], type = "private", tags = [], isGroup } = req.body;
     if (!name) return res.status(400).json({ message: "Room name is required" });
 
     const userId = req.user.id;
@@ -36,7 +36,7 @@ export const createChatRoom = async (req, res) => {
       createdBy: userId,
       admins: [userId],
       type,
-      isGroup: true,
+      isGroup: isGroup,
       tags,
     });
 
