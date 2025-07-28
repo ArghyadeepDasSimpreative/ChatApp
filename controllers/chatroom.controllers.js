@@ -268,12 +268,20 @@ export const sendMessage = async (req, res) => {
 
 export const roomId = async (req, res) => {
   const { roomId } = req.params;
- 
+  console.log("roomId", roomId);
+  if (!roomId) {
+    return res.status(400).json({ success: false, message: "Room ID is required" });
+  }
+  if (!req.user) {
+    return res.status(401).json({ success: false, message: "Unauthorized" });
+  }
   try {
-    const messages = await Message.find({ chatRoomId: roomId })
-      .sort({ timestamp: -1 }); // most recent first
+    const [messages, count] = await Promise.all([
+      Message.find({ chatRoom: roomId }).sort({ timestamp: -1 }),
+      Message.countDocuments({ chatRoom: roomId })
+    ]); 
  
-    res.status(200).json({ success: true, messages });
+    res.status(200).json({ success: true, count,messages });
   } catch (error) {
     console.error('Error fetching messages:', error);
     res.status(500).json({ success: false, message: 'Server Error' });

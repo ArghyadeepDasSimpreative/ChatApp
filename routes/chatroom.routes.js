@@ -16,7 +16,7 @@ chatRoomRoutes.put("/:id/privacy", authorizeRole("user"), checkGroupAdmin, chang
 chatRoomRoutes.post("/one-to-one-chat", authorizeRole("user"), handlePrivateChat);
 chatRoomRoutes.post("/group-chat", authorizeRole("user"), handleGroupChat);
 chatRoomRoutes.post("/send-message", authorizeRole("user"),sendMessage);
-chatRoomRoutes.get("/roomId", authorizeRole("user"),roomId)
+chatRoomRoutes.get("/:roomId", authorizeRole("user"),roomId)
 
 
 export default chatRoomRoutes;
