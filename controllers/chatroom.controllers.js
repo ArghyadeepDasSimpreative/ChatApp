@@ -265,3 +265,19 @@ export const sendMessage = async (req, res) => {
     return res.status(500).json({ success: false, message: "Message not sent", error: err.message });
   }
 };
+
+export const roomId = async (req, res) => {
+  const { roomId } = req.params;
+ 
+  try {
+    const messages = await Message.find({ chatRoomId: roomId })
+      .sort({ timestamp: -1 }); // most recent first
+ 
+    res.status(200).json({ success: true, messages });
+  } catch (error) {
+    console.error('Error fetching messages:', error);
+    res.status(500).json({ success: false, message: 'Server Error' });
+  }
+};
+ 
+
