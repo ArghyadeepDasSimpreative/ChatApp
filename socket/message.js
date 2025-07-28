@@ -28,7 +28,6 @@ import User from '../models/user.model.js';
 //   }
 // };
 
- 
 export const handleSendMessage = async (socket, io, data) => {
   console.log("📥 Server received message payload:", data);
  
@@ -39,6 +38,7 @@ export const handleSendMessage = async (socket, io, data) => {
   }
  
   try {
+    // 1. Create message
     const newMessage = await Message.create({
       sender,
       chatRoom: chatRoomId,
@@ -47,9 +47,24 @@ export const handleSendMessage = async (socket, io, data) => {
       isLiked: false,
     });
  
+    // 2. Populate sender details (name + profile image)
+    const populatedMessage = await newMessage.populate('sender', 'name profileImage');
+ 
+    // 3. Format createdAt to readable time
+    const formattedMessage = {
+      ...populatedMessage.toObject(),
+      time: new Date(populatedMessage.createdAt).toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit',
+      }),
+    };
+ 
+    // 4. Emit to chat room
     console.log("📤 Emitting message to room:", chatRoomId);
-    io.to(chatRoomId).emit("receive_message", newMessage);
+    io.to(chatRoomId).emit("receive_message", formattedMessage);
   } catch (error) {
     console.error("❌ Error saving message:", error);
   }
 };
+ 
+ 

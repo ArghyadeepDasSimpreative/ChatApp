@@ -1,39 +1,30 @@
-import mongoose from "mongoose";
-
-const messageSchema = new mongoose.Schema(
-  {
-    chatRoom: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "ChatRoom",
-      required: true,
-    },
-    sender: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
-    content: {
-      type: String,
-      default: "",
-    },
-    messageType: {
-      type: String,
-      enum: ["text", "image", "video", "file"],
-      default: "text",
-    },
-    fileUrl: {
-      type: String,
-    },
-    likes: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-      },
-    ],
+import mongoose from 'mongoose';
+ 
+const messageSchema = new mongoose.Schema({
+  sender: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User", // must match your User model
+    required: true,
   },
-  { timestamps: true }
-);
-
-const Message = mongoose.model("Message", messageSchema);
-
+  chatRoom: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "ChatRoom",
+    required: true,
+  },
+  content: {
+    type: String,
+    required: true,
+  },
+  type: {
+    type: String,
+    default: "text",
+  },
+  isLiked: {
+    type: Boolean,
+    default: false,
+  },
+}, { timestamps: true });
+ 
+const Message = mongoose.model('Message', messageSchema);
+ 
 export default Message;
