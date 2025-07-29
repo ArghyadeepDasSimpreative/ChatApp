@@ -1,7 +1,7 @@
 import express from "express";
 import { authorizeRole } from "../middlewares/authorize.js";
 import { uploadSingleFile } from "../middlewares/fileupload.js";
-import { addAdminToChatRoom, addMembersToChatRoom, changePrivacyStatus, createChatRoom, removeMemberFromChatRoom, updateChatRoomAvatar, updateChatRoomInfo, handlePrivateChat, handleGroupChat, sendMessage, roomId } from "../controllers/chatroom.controllers.js";
+import { addAdminToChatRoom, addMembersToChatRoom, changePrivacyStatus, createChatRoom, removeMemberFromChatRoom, updateChatRoomAvatar, updateChatRoomInfo, handlePrivateChat, handleGroupChat, sendMessage, roomId, sendermessages } from "../controllers/chatroom.controllers.js";
 import checkGroupAdmin from "../middlewares/checkGroupAdmin.js";
 
 const chatRoomRoutes = express.Router();
@@ -16,6 +16,7 @@ chatRoomRoutes.put("/:id/privacy", authorizeRole("user"), checkGroupAdmin, chang
 chatRoomRoutes.post("/one-to-one-chat", authorizeRole("user"), handlePrivateChat);
 chatRoomRoutes.post("/group-chat", authorizeRole("user"), handleGroupChat);
 chatRoomRoutes.post("/send-message", authorizeRole("user"),sendMessage);
-chatRoomRoutes.get("/:roomId", authorizeRole("user"),roomId)
+chatRoomRoutes.get("/:roomId", authorizeRole("user"),roomId);
+chatRoomRoutes.get("/get-messages/:senderId", authorizeRole("user"),sendermessages);
 
 export default chatRoomRoutes;

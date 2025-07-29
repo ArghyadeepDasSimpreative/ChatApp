@@ -2,6 +2,8 @@ import ChatRoom from "../models/chatroom.model.js";
 import Message from "../models/message.model.js"
 import { errorHandler } from "../lib/error.js";
 import { findOrCreatePrivateRoom, createGroupChat } from "../common.js";
+import mongoose from 'mongoose';
+
 
 export const createChatRoom = async (req, res) => {
   try {
@@ -287,5 +289,27 @@ export const roomId = async (req, res) => {
     return res.status(500).json({ success: false, message: 'Server Error' });
   }
 };
- 
 
+export const sendermessages = async (req, res) => {
+  try {
+    var senderId = req.params['senderId'];
+    if (!mongoose.Types.ObjectId.isValid(senderId)) {
+      return res.status(400).json({ success: false, message: "Invalid sender ID format" });
+    }
+
+    const objectSenderId = new mongoose.Types.ObjectId(senderId);
+
+    const messages = await Message.find({ sender: objectSenderId })
+    .sort({ createdAt: -1 })
+    .populate('receiver', 'fullName profileImageURL');
+
+    if (!messages || messages.length === 0) {
+      return res.status(404).json({ success: false, message: "No messages found for this sender" });
+    }
+
+    return res.status(200).json({ success: true, messages });
+  } catch (error) {
+    console.error("Error fetching sender messages:", error);
+    return res.status(500).json({ success: false, message: "Server Error" });
+  }
+}
