@@ -37,6 +37,13 @@ io.on("connection", (socket) => {
     console.log("from socket chatroom id is ", chatRoomId)
     socket.join(chatRoomId); // now the socket is listening to this room
   });
+    socket.on('typing', ({ roomId, senderId }) => {
+    socket.to(roomId).emit('typing', { senderId });
+  });
+
+  socket.on('stop_typing', ({ roomId, senderId }) => {
+    socket.to(roomId).emit('stop_typing', { senderId });
+  });
 
 });
 
@@ -50,7 +57,7 @@ app.use("/api/chatroom", chatRoomRoutes);
 app.use("/api/friendship", friendShipRoutes);
 app.use("/api/users", userRoutes);
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5002;
 httpServer.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
