@@ -31,7 +31,7 @@ import User from '../models/user.model.js';
 export const handleSendMessage = async (socket, io, data) => {
   console.log("📥 Server received message payload:", data);
  
-  const { sender, chatRoomId, content } = data;
+  const { sender, chatRoomId, content, receiver } = data;
   if (!sender || !chatRoomId || !content) {
     console.warn("❌ Missing fields in message");
     return;
@@ -41,6 +41,7 @@ export const handleSendMessage = async (socket, io, data) => {
     // 1. Create message
     const newMessage = await Message.create({
       sender,
+      receiver,
       chatRoom: chatRoomId,
       content,
       type: data.type || "text",

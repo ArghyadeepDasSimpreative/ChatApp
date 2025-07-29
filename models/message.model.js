@@ -6,6 +6,11 @@ const messageSchema = new mongoose.Schema({
     ref: "User", // must match your User model
     required: true,
   },
+  receiver: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User", // must match your User model
+    required: true,
+  },
   chatRoom: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "ChatRoom",

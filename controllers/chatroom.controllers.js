@@ -281,10 +281,10 @@ export const roomId = async (req, res) => {
       Message.countDocuments({ chatRoom: roomId })
     ]); 
  
-    res.status(200).json({ success: true, count,messages });
+    return res.status(200).json({ success: true, count,messages });
   } catch (error) {
     console.error('Error fetching messages:', error);
-    res.status(500).json({ success: false, message: 'Server Error' });
+    return res.status(500).json({ success: false, message: 'Server Error' });
   }
 };
  

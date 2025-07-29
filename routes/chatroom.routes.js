@@ -18,5 +18,4 @@ chatRoomRoutes.post("/group-chat", authorizeRole("user"), handleGroupChat);
 chatRoomRoutes.post("/send-message", authorizeRole("user"),sendMessage);
 chatRoomRoutes.get("/:roomId", authorizeRole("user"),roomId)
 
-
 export default chatRoomRoutes;
