@@ -299,9 +299,10 @@ export const sendermessages = async (req, res) => {
 
     const objectSenderId = new mongoose.Types.ObjectId(senderId);
 
-    const messages = await Message.find({ sender: objectSenderId })
+    const messages = await Message.find({   $or: [{ sender: objectSenderId },{ receiver: objectSenderId }] })
     .sort({ createdAt: -1 })
-    .populate('receiver', 'fullName profileImageURL');
+    .populate('receiver', 'fullName profileImageURL')
+    .populate('sender', 'fullName profileImageURL');
 
     if (!messages || messages.length === 0) {
       return res.status(404).json({ success: false, message: "No messages found for this sender" });
