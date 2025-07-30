@@ -32,6 +32,8 @@ export const handleSendMessage = async (socket, io, data) => {
   console.log("📥 Server received message payload:", data);
  
   const { sender, chatRoomId, content, receiver } = data;
+  console.log("handleSendMessagedata", data);
+  
   if (!sender || !chatRoomId || !content) {
     console.warn("❌ Missing fields in message");
     return;
